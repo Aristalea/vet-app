@@ -264,8 +264,33 @@ function renderMyPets() {
   `).join('');
 }
 
+function updateAppointmentAvailability() {
+  const slots = getAvailableSlots();
+
+  const dates = {
+    "2026-04-15": document.getElementById("availability-2026-04-15"),
+    "2026-04-16": document.getElementById("availability-2026-04-16")
+  };
+
+  Object.keys(dates).forEach(date => {
+    const element = dates[date];
+    if (!element) return;
+
+    const count = slots.filter(slot => slot.date === date).length;
+
+    if (count === 0) {
+      element.textContent = "No appointments available";
+    } else if (count === 1) {
+      element.textContent = "1 appointment available";
+    } else {
+      element.textContent = `${count} appointments available`;
+    }
+  });
+}
+
 seedPets();
 seedAvailableSlots();
+updateAppointmentAvailability();
 
 const dateForm = document.getElementById('dateForm');
 if (dateForm) {
