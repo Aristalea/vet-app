@@ -1,3 +1,5 @@
+console.log('app.js loaded');
+
 function getAppointment() {
   return JSON.parse(localStorage.getItem('appointmentData') || '{}');
 }
@@ -54,16 +56,14 @@ seedPets();
 const dateForm = document.getElementById('dateForm');
 
 if (dateForm) {
+  console.log("date form found");
+
   dateForm.addEventListener('submit', (e) => {
+    console.log("date form submitted");
+
     e.preventDefault();
     const formData = new FormData(dateForm);
-    localStorage.setItem(
-      'appointmentData',
-      JSON.stringify({
-        ...JSON.parse(localStorage.getItem('appointmentData') || '{}'),
-        appointmentDate: formData.get('appointmentDate')
-      })
-    );
+    setAppointment({ appointmentDate: formData.get('appointmentDate') });
     window.location.href = 'schedule-time.html';
   });
 }
