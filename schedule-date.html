@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule Appointment | Date</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="top-nav">
+      <a href="schedule-date.html">Schedule an Appointment</a>
+      <a href="treatment-plan.html">Access Treatment Plans</a>
+      <a href="#">Discharge Instructions</a>
+      <a href="#">Billing and Invoices</a>
+      <a href="#">My Pets</a>
+      <a href="#">My Account</a>
+      <a href="index.html">Log Out</a>
+    </nav>
+
+    <main>
+      <h1>Schedule an Appointment</h1>
+      <p>First, pick a date that works for you.</p>
+      <form id="dateForm">
+        <div class="choice-grid two">
+          <label class="choice-card">
+            <input type="radio" name="appointmentDate" value="2026-04-15" required />
+            <span>April 15, 2026<br><small>6 appointments available</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="radio" name="appointmentDate" value="2026-04-16" required />
+            <span>April 16, 2026<br><small>4 appointments available</small></span>
+          </label>
+        </div>
+        <div class="footer-actions">
+          <a class="btn btn-secondary" href="home.html">Back</a>
+          <button class="btn" type="submit">Next</button>
+        </div>
+      </form>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
