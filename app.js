@@ -30,7 +30,7 @@ function seedAvailableSlots() {
   const existingSlots = getAvailableSlots();
 
   if (existingSlots.length === 0) {
-    const starterSlots = [
+    setAvailableSlots([
       {
         id: 'slot-1',
         date: '2026-04-15',
@@ -61,9 +61,7 @@ function seedAvailableSlots() {
         date: '2026-04-16',
         label: '2:00 PM | Dr. Lee | Dental Exam'
       }
-    ];
-
-    setAvailableSlots(starterSlots);
+    ]);
   }
 }
 
