@@ -23,6 +23,7 @@ if (timeForm) {
   if (data.appointmentDate && selectedDateText) {
     selectedDateText.textContent = `Selected date: ${data.appointmentDate}. Now choose an available appointment.`;
   }
+
   timeForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(timeForm);
@@ -38,6 +39,7 @@ if (detailsForm) {
     const field = detailsForm.elements.namedItem(key);
     if (field) field.value = value;
   });
+
   detailsForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(detailsForm);
@@ -50,6 +52,7 @@ function renderSummary(targetId) {
   const data = getAppointment();
   const target = document.getElementById(targetId);
   if (!target) return;
+
   target.innerHTML = `
     <h2>Your Appointment Details</h2>
     <p><strong>Date:</strong> ${data.appointmentDate || 'Not selected'}</p>
@@ -58,7 +61,7 @@ function renderSummary(targetId) {
     <p><strong>Pet Species:</strong> ${data.petSpecies || ''}</p>
     <p><strong>Pet Breed:</strong> ${data.petBreed || ''}</p>
     <p><strong>Owner Name:</strong> ${data.ownerName || ''}</p>
-    <p><strong>Owner Contact:</strong> ${data.ownerEmail || ''} ${data.ownerPhone ? ' | ' + data.ownerPhone : ''}</p>
+    <p><strong>Owner Contact:</strong> ${data.ownerEmail || ''}${data.ownerPhone ? ' | ' + data.ownerPhone : ''}</p>
     <p><strong>Notes:</strong> ${data.notes || 'None provided'}</p>
   `;
 }
@@ -79,10 +82,12 @@ if (treatmentForm) {
     e.preventDefault();
     const value = document.getElementById('petSelect').value;
     const output = document.getElementById('treatmentOutput');
+
     if (!value) {
       output.innerHTML = '<p>Please select a pet first.</p>';
       return;
     }
+
     const [pet, status, meds, followup] = value.split('|');
     output.innerHTML = `
       <h2>${pet} Treatment Plan</h2>
