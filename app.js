@@ -52,11 +52,18 @@ function seedPets() {
 seedPets();
 
 const dateForm = document.getElementById('dateForm');
+
 if (dateForm) {
   dateForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(dateForm);
-    setAppointment({ appointmentDate: formData.get('appointmentDate') });
+    localStorage.setItem(
+      'appointmentData',
+      JSON.stringify({
+        ...JSON.parse(localStorage.getItem('appointmentData') || '{}'),
+        appointmentDate: formData.get('appointmentDate')
+      })
+    );
     window.location.href = 'schedule-time.html';
   });
 }
