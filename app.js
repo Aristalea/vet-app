@@ -281,27 +281,40 @@ if (dateForm) {
 
 const timeForm = document.getElementById('timeForm');
 if (timeForm) {
-  const data = getAppointment();
+  const appointment = getAppointment();
   const selectedDateText = document.getElementById('selectedDateText');
   const timeOptions = document.getElementById('timeOptions');
 
-  if (data.appointmentDate && selectedDateText) {
-    selectedDateText.textContent = `Selected date: ${data.appointmentDate}. Now choose an available appointment.`;
+  if (selectedDateText) {
+    if (appointment.appointmentDate) {
+      selectedDateText.textContent = `Selected date: ${appointment.appointmentDate}. Now choose an available appointment.`;
+    } else {
+      selectedDateText.textContent = 'No appointment date selected. Please go back and choose a date.';
+    }
   }
 
   if (timeOptions) {
-    const slots = getAvailableSlots().filter(
-      (slot) => slot.date === data.appointmentDate
-    );
+    const allSlots = getAvailableSlots();
+    const matchingSlots = allSlots.filter(slot => slot.date === appointment.appointmentDate);
 
-    if (slots.length === 0) {
+    if (!appointment.appointmentDate) {
+      timeOptions.innerHTML = `
+        <p>No appointment date was found. Please go back and choose a date first.</p>
+      `;
+    } else if (matchingSlots.length === 0) {
       timeOptions.innerHTML = `
         <p>No appointments are currently available for this date.</p>
       `;
     } else {
-      timeOptions.innerHTML = slots.map((slot) => `
+      timeOptions.innerHTML = matchingSlots.map(slot => `
         <label class="choice-card">
-          <input type="radio" name="appointmentTime" value="${slot.label}" data-slot-id="${slot.id}" required />
+          <input
+            type="radio"
+            name="appointmentTime"
+            value="${slot.label}"
+            data-slot-id="${slot.id}"
+            required
+          />
           <span>${slot.label}</span>
         </label>
       `).join('');
@@ -312,7 +325,11 @@ if (timeForm) {
     e.preventDefault();
 
     const selectedRadio = timeForm.querySelector('input[name="appointmentTime"]:checked');
-    if (!selectedRadio) return;
+
+    if (!selectedRadio) {
+      alert('Please select an appointment time before continuing.');
+      return;
+    }
 
     setAppointment({
       appointmentTime: selectedRadio.value,
