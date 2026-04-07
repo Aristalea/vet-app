@@ -125,3 +125,21 @@ function renderScheduledAppointments() {
 }
 
 renderScheduledAppointments();
+
+const cancelAppointmentButton = document.getElementById('cancelAppointmentButton');
+
+if (cancelAppointmentButton) {
+  cancelAppointmentButton.addEventListener('click', () => {
+    if (confirm("Are you sure you want to cancel this appointment?")) {
+      localStorage.removeItem('appointmentData');
+
+      const output = document.getElementById('scheduledAppointmentsOutput');
+      if (output) {
+        output.innerHTML = `
+          <p>Your appointment has been cancelled.</p>
+          <p><a class="btn" href="schedule-date.html">Schedule a New Appointment</a></p>
+        `;
+      }
+    }
+  });
+}
