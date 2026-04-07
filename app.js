@@ -18,6 +18,55 @@ function setPets(pets) {
   localStorage.setItem('pets', JSON.stringify(pets));
 }
 
+function getAvailableSlots() {
+  return JSON.parse(localStorage.getItem('availableSlots') || '[]');
+}
+
+function setAvailableSlots(slots) {
+  localStorage.setItem('availableSlots', JSON.stringify(slots));
+}
+
+function seedAvailableSlots() {
+  const existingSlots = getAvailableSlots();
+
+  if (existingSlots.length === 0) {
+    const starterSlots = [
+      {
+        id: 'slot-1',
+        date: '2026-04-15',
+        label: '9:00 AM | Dr. Smith | General Checkup'
+      },
+      {
+        id: 'slot-2',
+        date: '2026-04-15',
+        label: '10:30 AM | Dr. Patel | General Checkup'
+      },
+      {
+        id: 'slot-3',
+        date: '2026-04-15',
+        label: '1:00 PM | Dr. Lee | Dermatology'
+      },
+      {
+        id: 'slot-4',
+        date: '2026-04-16',
+        label: '9:30 AM | Dr. Smith | General Checkup'
+      },
+      {
+        id: 'slot-5',
+        date: '2026-04-16',
+        label: '11:00 AM | Dr. Patel | Surgery Consult'
+      },
+      {
+        id: 'slot-6',
+        date: '2026-04-16',
+        label: '2:00 PM | Dr. Lee | Dental Exam'
+      }
+    ];
+
+    setAvailableSlots(starterSlots);
+  }
+}
+
 function seedPets() {
   const existingPets = getPets();
   if (existingPets.length === 0) {
@@ -218,6 +267,7 @@ function renderMyPets() {
 }
 
 seedPets();
+seedAvailableSlots();
 
 const dateForm = document.getElementById('dateForm');
 if (dateForm) {
@@ -233,15 +283,42 @@ const timeForm = document.getElementById('timeForm');
 if (timeForm) {
   const data = getAppointment();
   const selectedDateText = document.getElementById('selectedDateText');
+  const timeOptions = document.getElementById('timeOptions');
 
   if (data.appointmentDate && selectedDateText) {
     selectedDateText.textContent = `Selected date: ${data.appointmentDate}. Now choose an available appointment.`;
   }
 
+  if (timeOptions) {
+    const slots = getAvailableSlots().filter(
+      (slot) => slot.date === data.appointmentDate
+    );
+
+    if (slots.length === 0) {
+      timeOptions.innerHTML = `
+        <p>No appointments are currently available for this date.</p>
+      `;
+    } else {
+      timeOptions.innerHTML = slots.map((slot) => `
+        <label class="choice-card">
+          <input type="radio" name="appointmentTime" value="${slot.label}" data-slot-id="${slot.id}" required />
+          <span>${slot.label}</span>
+        </label>
+      `).join('');
+    }
+  }
+
   timeForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const formData = new FormData(timeForm);
-    setAppointment({ appointmentTime: formData.get('appointmentTime') });
+
+    const selectedRadio = timeForm.querySelector('input[name="appointmentTime"]:checked');
+    if (!selectedRadio) return;
+
+    setAppointment({
+      appointmentTime: selectedRadio.value,
+      appointmentSlotId: selectedRadio.dataset.slotId
+    });
+
     window.location.href = 'schedule-details.html';
   });
 }
@@ -307,6 +384,16 @@ renderMyPets();
 const confirmButton = document.getElementById('confirmButton');
 if (confirmButton) {
   confirmButton.addEventListener('click', () => {
+    const appointment = getAppointment();
+    const slotId = appointment.appointmentSlotId;
+
+    if (slotId) {
+      const remainingSlots = getAvailableSlots().filter(
+        (slot) => slot.id !== slotId
+      );
+      setAvailableSlots(remainingSlots);
+    }
+
     window.location.href = 'appointment-success.html';
   });
 }
@@ -314,7 +401,24 @@ if (confirmButton) {
 const cancelAppointmentButton = document.getElementById('cancelAppointmentButton');
 if (cancelAppointmentButton) {
   cancelAppointmentButton.addEventListener('click', () => {
+    const appointment = getAppointment();
+
     if (confirm('Are you sure you want to cancel this appointment?')) {
+      if (appointment.appointmentSlotId && appointment.appointmentDate && appointment.appointmentTime) {
+        const slots = getAvailableSlots();
+
+        const alreadyExists = slots.some((slot) => slot.id === appointment.appointmentSlotId);
+
+        if (!alreadyExists) {
+          slots.push({
+            id: appointment.appointmentSlotId,
+            date: appointment.appointmentDate,
+            label: appointment.appointmentTime
+          });
+          setAvailableSlots(slots);
+        }
+      }
+
       clearAppointment();
       renderScheduledAppointments();
     }
