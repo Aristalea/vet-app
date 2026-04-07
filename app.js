@@ -97,3 +97,31 @@ if (treatmentForm) {
     `;
   });
 }
+
+function renderScheduledAppointments() {
+  const target = document.getElementById('scheduledAppointmentsOutput');
+  if (!target) return;
+
+  const data = getAppointment();
+
+  if (!data.appointmentDate && !data.appointmentTime) {
+    target.innerHTML = `
+      <p>No appointment is currently scheduled.</p>
+      <p><a class="btn" href="schedule-date.html">Schedule an Appointment</a></p>
+    `;
+    return;
+  }
+
+  target.innerHTML = `
+    <h2>Upcoming Appointment</h2>
+    <p><strong>Date:</strong> ${data.appointmentDate || 'Not selected'}</p>
+    <p><strong>Time / Doctor:</strong> ${data.appointmentTime || 'Not selected'}</p>
+    <p><strong>Pet Name:</strong> ${data.petName || 'Not provided'}</p>
+    <p><strong>Pet Species:</strong> ${data.petSpecies || 'Not provided'}</p>
+    <p><strong>Owner Name:</strong> ${data.ownerName || 'Not provided'}</p>
+    <p><strong>Owner Contact:</strong> ${data.ownerEmail || ''}${data.ownerPhone ? ' | ' + data.ownerPhone : ''}</p>
+    <p><strong>Notes:</strong> ${data.notes || 'None provided'}</p>
+  `;
+}
+
+renderScheduledAppointments();
