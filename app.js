@@ -65,6 +65,41 @@ function seedAvailableSlots() {
   }
 }
 
+const USERS = [
+  {
+    email: 'patient@vetapp.com',
+    password: 'patient123',
+    role: 'patient',
+    name: 'Demo Patient'
+  },
+  {
+    email: 'employee@vetapp.com',
+    password: 'employee123',
+    role: 'employee',
+    name: 'Demo Employee'
+  }
+];
+
+function getCurrentUser() {
+  return JSON.parse(localStorage.getItem('currentUser') || 'null');
+}
+
+function setCurrentUser(user) {
+  localStorage.setItem('currentUser', JSON.stringify(user));
+}
+
+function clearCurrentUser() {
+  localStorage.removeItem('currentUser');
+}
+
+function getAllAppointments() {
+  return JSON.parse(localStorage.getItem('appointments') || '[]');
+}
+
+function setAllAppointments(appointments) {
+  localStorage.setItem('appointments', JSON.stringify(appointments));
+}
+
 function seedPets() {
   const existingPets = getPets();
   if (existingPets.length === 0) {
@@ -434,6 +469,23 @@ if (confirmButton) {
       setAvailableSlots(remainingSlots);
     }
 
+    const allAppointments = getAllAppointments();
+
+    allAppointments.push({
+      id: `appt-${Date.now()}`,
+      appointmentDate: appointment.appointmentDate || '',
+      appointmentTime: appointment.appointmentTime || '',
+      petName: appointment.petName || '',
+      petSpecies: appointment.petSpecies || '',
+      ownerName: appointment.ownerName || '',
+      ownerEmail: appointment.ownerEmail || '',
+      ownerPhone: appointment.ownerPhone || '',
+      notes: appointment.notes || '',
+      status: 'Scheduled'
+    });
+
+    setAllAppointments(allAppointments);
+
     window.location.href = 'appointment-success.html';
   });
 }
@@ -446,7 +498,6 @@ if (cancelAppointmentButton) {
     if (confirm('Are you sure you want to cancel this appointment?')) {
       if (appointment.appointmentSlotId && appointment.appointmentDate && appointment.appointmentTime) {
         const slots = getAvailableSlots();
-
         const alreadyExists = slots.some((slot) => slot.id === appointment.appointmentSlotId);
 
         if (!alreadyExists) {
@@ -459,11 +510,89 @@ if (cancelAppointmentButton) {
         }
       }
 
+      const updatedAppointments = getAllAppointments().filter(
+        (appt) =>
+          !(
+            appt.appointmentDate === appointment.appointmentDate &&
+            appt.appointmentTime === appointment.appointmentTime &&
+            appt.petName === appointment.petName
+          )
+      );
+
+      setAllAppointments(updatedAppointments);
       clearAppointment();
       renderScheduledAppointments();
     }
   });
 }
+
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(loginForm);
+    const email = formData.get('email').trim().toLowerCase();
+    const password = formData.get('password');
+
+    const matchedUser = USERS.find(
+      user => user.email === email && user.password === password
+    );
+
+    const errorTarget = document.getElementById('loginError');
+
+    if (!matchedUser) {
+      if (errorTarget) {
+        errorTarget.textContent = 'Invalid email or password.';
+      }
+      return;
+    }
+
+    setCurrentUser(matchedUser);
+
+    if (matchedUser.role === 'employee') {
+      window.location.href = 'employee-appointments.html';
+    } else {
+      window.location.href = 'home.html';
+    }
+  });
+}
+
+function enforceRoleAccess() {
+  const currentUser = getCurrentUser();
+  const currentPage = window.location.pathname.split('/').pop();
+
+  const publicPages = ['index.html', ''];
+  const employeeOnlyPage = 'employee-appointments.html';
+
+  if (publicPages.includes(currentPage)) {
+    return;
+  }
+
+  if (!currentUser) {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  if (currentUser.role === 'employee' && currentPage !== employeeOnlyPage) {
+    window.location.href = 'employee-appointments.html';
+    return;
+  }
+
+  if (currentUser.role === 'patient' && currentPage === employeeOnlyPage) {
+    window.location.href = 'home.html';
+    return;
+  }
+}
+
+const logoutLink = document.getElementById('logoutLink');
+if (logoutLink) {
+  logoutLink.addEventListener('click', () => {
+    clearCurrentUser();
+  });
+}
+
+enforceRoleAccess();
 
 const treatmentForm = document.getElementById('treatmentForm');
 if (treatmentForm) {
@@ -496,3 +625,30 @@ if (treatmentForm) {
     `;
   });
 }
+
+function renderEmployeeAppointments() {
+  const target = document.getElementById('employeeAppointmentsOutput');
+  if (!target) return;
+
+  const appointments = getAllAppointments();
+
+  if (appointments.length === 0) {
+    target.innerHTML = '<p>No scheduled appointments found.</p>';
+    return;
+  }
+
+  target.innerHTML = appointments.map((appointment) => `
+    <div class="summary-card">
+      <h2>${appointment.petName || 'Unnamed Pet'}</h2>
+      <p><strong>Date:</strong> ${appointment.appointmentDate || 'Not selected'}</p>
+      <p><strong>Time / Doctor:</strong> ${appointment.appointmentTime || 'Not selected'}</p>
+      <p><strong>Species:</strong> ${appointment.petSpecies || 'Not provided'}</p>
+      <p><strong>Owner:</strong> ${appointment.ownerName || 'Not provided'}</p>
+      <p><strong>Contact:</strong> ${appointment.ownerEmail || ''}${appointment.ownerPhone ? ' | ' + appointment.ownerPhone : ''}</p>
+      <p><strong>Status:</strong> ${appointment.status}</p>
+      <p><strong>Notes:</strong> ${appointment.notes || 'None provided'}</p>
+    </div>
+  `).join('');
+}
+
+renderEmployeeAppointments();

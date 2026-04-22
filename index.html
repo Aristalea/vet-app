@@ -3,24 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Companions Veterinary Center</title>
+  <title>Vet App Login</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="split-screen">
-    <section class="panel panel-blue">
-      <div class="brand">Companions Veterinary Center</div>
-      <h1>Clinic Dashboard</h1>
-      <p>Manage your pet's care with a simple prototype portal for scheduling and viewing information.</p>
-      <div class="button-row">
-        <a class="btn" href="home.html">Log In</a>
-        <a class="btn btn-secondary" href="home.html">Register</a>
-      </div>
-      <p class="small">Hours: M–F 9AM–5PM<br />Companions Veterinary Center</p>
-    </section>
-    <section class="panel panel-light">
-      <div class="image-placeholder">Veterinary Office Image Placeholder</div>
-    </section>
-  </main>
+  <div class="app-shell">
+    <main class="login-page">
+      <h1>Companions Veterinary Center</h1>
+      <p>Please sign in to continue.</p>
+
+      <form id="loginForm" class="form-grid">
+        <label>
+          Email
+          <input type="email" name="email" required />
+        </label>
+
+        <label>
+          Password
+          <input type="password" name="password" required />
+        </label>
+
+        <div class="full-width footer-actions">
+          <button class="btn" type="submit">Log In</button>
+        </div>
+      </form>
+
+      <section class="summary-card">
+        <h2>Demo Login Information</h2>
+        <p><strong>Patient:</strong> patient@vetapp.com / patient123</p>
+        <p><strong>Employee:</strong> employee@vetapp.com / employee123</p>
+      </section>
+
+      <p id="loginError"></p>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
