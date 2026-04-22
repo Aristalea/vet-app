@@ -33,32 +33,32 @@ function seedAvailableSlots() {
     setAvailableSlots([
       {
         id: 'slot-1',
-        date: '2026-04-15',
+        date: '2026-04-25',
         label: '9:00 AM | Dr. Smith | General Checkup'
       },
       {
         id: 'slot-2',
-        date: '2026-04-15',
+        date: '2026-04-25',
         label: '10:30 AM | Dr. Patel | General Checkup'
       },
       {
         id: 'slot-3',
-        date: '2026-04-15',
+        date: '2026-04-25',
         label: '1:00 PM | Dr. Lee | Dermatology'
       },
       {
         id: 'slot-4',
-        date: '2026-04-16',
+        date: '2026-04-26',
         label: '9:30 AM | Dr. Smith | General Checkup'
       },
       {
         id: 'slot-5',
-        date: '2026-04-16',
+        date: '2026-04-26',
         label: '11:00 AM | Dr. Patel | Surgery Consult'
       },
       {
         id: 'slot-6',
-        date: '2026-04-16',
+        date: '2026-04-26',
         label: '2:00 PM | Dr. Lee | Dental Exam'
       }
     ]);
