@@ -133,3 +133,9 @@ input, textarea, select {
   font-weight: bold;
   margin-top: 0.5rem;
 }
+
+.nav-logo {
+  height: 35px;
+  max-height: 35px;
+  width: auto;
+}
