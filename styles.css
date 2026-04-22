@@ -122,7 +122,9 @@ input, textarea, select {
 }
 
 .home-logo {
-  height: 140px;
+  width: 60%;
+  max-width: 400px;
+  height: auto;
   display: block;
   margin: 0 auto 1rem;
 }
