@@ -127,3 +127,9 @@ input, textarea, select {
   display: block;
   margin: 0 auto 1rem;
 }
+
+.arrival-confirmed-text {
+  color: green;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}

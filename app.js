@@ -647,8 +647,34 @@ function renderEmployeeAppointments() {
       <p><strong>Contact:</strong> ${appointment.ownerEmail || ''}${appointment.ownerPhone ? ' | ' + appointment.ownerPhone : ''}</p>
       <p><strong>Status:</strong> ${appointment.status}</p>
       <p><strong>Notes:</strong> ${appointment.notes || 'None provided'}</p>
+
+      ${
+        appointment.status !== 'Patient arrival confirmed'
+          ? `<button class="btn confirm-arrival-btn" data-id="${appointment.id}">Confirm Arrival</button>`
+          : `<p class="arrival-confirmed-text">Patient arrival confirmed</p>`
+      }
     </div>
   `).join('');
 }
+
+document.addEventListener('click', function (e) {
+  if (e.target.classList.contains('confirm-arrival-btn')) {
+    const appointmentId = e.target.dataset.id;
+    const appointments = getAllAppointments();
+
+    const updatedAppointments = appointments.map((appointment) => {
+      if (appointment.id === appointmentId) {
+        return {
+          ...appointment,
+          status: 'Patient arrival confirmed'
+        };
+      }
+      return appointment;
+    });
+
+    setAllAppointments(updatedAppointments);
+    renderEmployeeAppointments();
+  }
+});
 
 renderEmployeeAppointments();
